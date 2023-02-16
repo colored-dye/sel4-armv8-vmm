@@ -1,0 +1,6 @@
+qemu-system-aarch64 \
+    --kernel images/sel4arm-vmm-image-arm-zynqmp \
+    --cpu cortex-a53 \
+    --machine virt,virtualization=on,highmem=off,secure=off \
+    -m 2048 \
+    -nographic

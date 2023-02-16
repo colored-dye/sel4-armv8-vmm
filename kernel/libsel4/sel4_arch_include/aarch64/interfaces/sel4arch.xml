@@ -1,0 +1,193 @@
+<?xml version="1.0" ?>
+<!--
+  Copyright 2017, Data61
+  Commonwealth Scientific and Industrial Research Organisation (CSIRO)
+  ABN 41 687 119 230.
+
+  This software may be distributed and modified according to the terms of
+  the BSD 2-Clause license. Note that NO WARRANTY is provided.
+  See "LICENSE_BSD2.txt" for details.
+
+    @TAG(DATA61_BSD)
+ -->
+<api name="ObjectApiAarch64" label_prefix="aarch64_">
+    <struct name="seL4_UserContext">
+        <member name="pc"/>
+        <member name="sp"/>
+        <member name="spsr"/>
+        <member name="x0"/>
+        <member name="x1"/>
+        <member name="x2"/>
+        <member name="x3"/>
+        <member name="x4"/>
+        <member name="x5"/>
+        <member name="x6"/>
+        <member name="x7"/>
+        <member name="x8"/>
+        <member name="x16"/>
+        <member name="x17"/>
+        <member name="x18"/>
+        <member name="x29"/>
+        <member name="x30"/>
+        <member name="x9"/>
+        <member name="x10"/>
+        <member name="x11"/>
+        <member name="x12"/>
+        <member name="x13"/>
+        <member name="x14"/>
+        <member name="x15"/>
+        <member name="x19"/>
+        <member name="x20"/>
+        <member name="x21"/>
+        <member name="x22"/>
+        <member name="x23"/>
+        <member name="x24"/>
+        <member name="x25"/>
+        <member name="x26"/>
+        <member name="x27"/>
+        <member name="x28"/>
+    </struct>
+    <interface name="seL4_ARM_PageGlobalDirectory" manual_name="Page Global Directory">
+        <method id="ARMPageGlobalDirectoryClean_Data" name="Clean_Data" manual_label="pgd_clean"
+            manual_name="Clean Data">
+                <brief>
+                    Clean cached pages within a global page directory
+                </brief>
+                <description>
+                     See <autoref label="ch:vspace"/>.
+                </description>
+            <param dir="in" name="start" type="seL4_Word"
+            description="Start address"/>
+            <param dir="in" name="end" type="seL4_Word"
+            description="End address"/>
+        </method>
+        <method id="ARMPageGlobalDirectoryInvalidate_Data" name="Invalidate_Data"
+            manual_name="Invalidate Data" manual_label="pgd_invalidate">
+                <brief>
+                    Invalidate cached pages within a global page directory
+                </brief>
+             <description>
+                 See <autoref label="ch:vspace"/>.
+             </description>
+            <param dir="in" name="start" type="seL4_Word"
+            description="Start address"/>
+            <param dir="in" name="end" type="seL4_Word"
+            description="End address"/>
+        </method>
+        <method id="ARMPageGlobalDirectoryCleanInvalidate_Data" name="CleanInvalidate_Data"
+            manual_name="Clean and Invalidate Data" manual_label="pgd_clean_invalidate">
+                <brief>
+                    Clean and invalidate cached pages within a global page directory
+                </brief>
+             <description>
+                 See <autoref label="ch:vspace"/>.
+             </description>
+            <param dir="in" name="start" type="seL4_Word"
+            description="Start address"/>
+            <param dir="in" name="end" type="seL4_Word"
+            description="End address"/>
+        </method>
+        <method id="ARMPageGlobalDirectoryUnify_Instruction" name="Unify_Instruction"
+            manual_name="Unify Instruction" manual_label="pgd_unify_instruction">
+                <brief>
+                    Clean and invalidate cached instruction pages to point of unification
+                </brief>
+             <description>
+                 See <autoref label="ch:vspace"/>.
+             </description>
+            <param dir="in" name="start" type="seL4_Word"/>
+            <param dir="in" name="end" type="seL4_Word"/>
+        </method>
+    </interface>
+    <interface name="seL4_ARM_PageUpperDirectory" manual_name="Page Upper Directory">
+        <method id="ARMPageUpperDirectoryMap" name="Map">
+                <brief>
+                    Map an upper page directory
+                </brief>
+                <description>
+                    Map an upper page directory (level 1) to a global page directory (level 0)
+                </description>
+            <param dir="in" name="pgd" type="seL4_CPtr"
+            description="Global page directory"/>
+            <param dir="in" name="vaddr" type="seL4_Word"
+            description="Virtual address"/>
+            <param dir="in" name="attr" type="seL4_ARM_VMAttributes"
+            description="Memory attributes"/>
+        </method>
+        <method id="ARMPageUpperDirectoryUnmap" name="Unmap">
+        </method>
+    </interface>
+    <interface name="seL4_ARM_PageDirectory" manual_name="Page Directory">
+        <method id="ARMPageDirectoryMap" name="Map">
+                <brief>
+                    Map a page directory
+                </brief>
+                <description>
+                    Map a page directory (level 2) to an upper page directory (level 1)
+                </description>
+            <param dir="in" name="pud" type="seL4_CPtr"
+            description="Upper page directory"/>
+            <param dir="in" name="vaddr" type="seL4_Word"
+            description="Virtual adress"/>
+            <param dir="in" name="attr" type="seL4_ARM_VMAttributes"
+            description="Memory attributes"/>
+        </method>
+        <method id="ARMPageDirectoryUnmap" name="Unmap">
+                <brief>
+                    Unmap a page directory
+                </brief>
+                <description>
+                    Unmap a page directory (level 2) from an upper page directory (level 1)
+                </description>
+        </method>
+    </interface>
+    <interface name="seL4_ARM_VCPU" manual_name="VCPU">
+        <method id="ARMVCPUSetTCB" name="SetTCB" condition="defined(CONFIG_ARM_HYPERVISOR_SUPPORT)"
+            manual_name="Set TCB">
+                <brief>
+                    Bind a TCB to a virtual CPU
+                </brief>
+             <description>
+                 There is a 1:1 relationship between a virtual CPU and a TCB. If either (or both) of them is
+                 associated with another one, they will be dissociated, and then associated to the
+                 ones called in this system calls.
+             </description>
+            <param dir="in" name="tcb" type="seL4_TCB"
+            description="Capability to TCB to bind to a virtual CPU"/>
+        </method>
+        <method id="ARMVCPUInjectIRQ" name="InjectIRQ" condition="defined(CONFIG_ARM_HYPERVISOR_SUPPORT)"
+            manual_name="Inject IRQ">
+                <brief>
+                    Inject an IRQ to a virtual CPU
+                </brief>
+            <param dir="in" name="virq" type="seL4_Uint16"
+            description="Virtual IRQ ID"/>
+            <param dir="in" name="priority" type="seL4_Uint8"
+            description="Priority of the IRQ to be injected"/>
+            <param dir="in" name="group" type="seL4_Uint8"
+            description="IRQ group"/>
+            <param dir="in" name="index" type="seL4_Uint8"
+            description="IRQ index"/>
+        </method>
+        <method id="ARMVCPUReadReg" name="ReadRegs" condition="defined(CONFIG_ARM_HYPERVISOR_SUPPORT)"
+            manual_name="Read Registers">
+                <brief>
+                    Read a virtual CPU register
+                </brief>
+            <param dir="in" name="field" type="seL4_Uint32"
+            description="Register to read from a VCPU"/>
+            <param dir="out" name="value" type="seL4_Uint32"
+            description="Returned value of the VCPU register"/>
+        </method>
+        <method id="ARMVCPUWriteReg" name="WriteRegs" condition="defined(CONFIG_ARM_HYPERVISOR_SUPPORT)"
+            manual_name="Write Registers">
+                <brief>
+                    Write a virtual CPU register
+                </brief>
+            <param dir="in" name="field" type="seL4_Uint32"
+            description="Register ID to write to a VCPU"/>
+            <param dir="in" name="value" type="seL4_Uint64"
+            description="Value to be written to the VCPU register"/>
+        </method>
+    </interface>
+</api>
