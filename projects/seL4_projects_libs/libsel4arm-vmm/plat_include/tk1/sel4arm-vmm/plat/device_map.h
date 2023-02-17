@@ -9,12 +9,11 @@
  *
  * @TAG(DATA61_BSD)
  */
-#ifndef SEL4ARM_VMM_TK1_MAP_H
-#define SEL4ARM_VMM_TK1_MAP_H
+#pragma once
 
 /***** Physical Map ****/
 #define RAM_BASE  0x80000000
-#define RAM_END   0x90000000
+#define RAM_END   0xC0000000
 #define RAM_SIZE (RAM_END - RAM_BASE)
 
 #define USB1_PADDR              0x7d000000
@@ -28,5 +27,3 @@
 #define APB_MISC_PADDR          0x70000000
 #define FUSE_PADDR              0x7000f000
 #define GPIOS_PADDR             0x6000d000
-
-#endif /* SEL4ARM_VMM_TK1_MAP_H */

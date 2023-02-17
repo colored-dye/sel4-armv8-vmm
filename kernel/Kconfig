@@ -141,12 +141,6 @@ menu "seL4 System"
         default n
             help
                 Common flag for iMX7 SoC
-    
-    config PLAT_QEMU
-        bool
-        default n
-        help
-            Common flag for qemu-arm-virt
 
     choice
         prompt "Platform Type"
@@ -339,17 +333,6 @@ menu "seL4 System"
             select HAVE_GIC_390
             help
                 Support for Tegra X1 platform
-        
-        config PLAT_QEMU
-            bool "Qemu (Virt, ARMv8a, Cortex A53)"
-            depends on ARCH_AARCH64
-            select ARM_CORTEX_A53
-            select ARCH_ARM_V8A
-            select HAVE_GIC_390
-            select HAVE_FPU if ARCH_AARCH64
-            select START_L1 if ARCH_AARCH64 && ARM_HYPERVISOR_SUPPORT
-            help
-                Support for Qemu aarch64 platform.
     endchoice
 
     config ARM_HYPERVISOR_SUPPORT

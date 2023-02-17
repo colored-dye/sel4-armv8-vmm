@@ -1,0 +1,5 @@
+#!/usr/bin/sh
+
+gdb-multiarch \
+    -ex "target remote :1234" \
+    images/sel4arm-vmm-image-arm-zynqmp

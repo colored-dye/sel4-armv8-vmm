@@ -38,8 +38,7 @@ Arch_switchToIdleThread(void)
     writeTPIDRURO(0);
 }
 
-void 
-// CONST
+void CONST
 Arch_activateIdleThread(tcb_t *tcb)
 {
     /* Don't need to do anything */

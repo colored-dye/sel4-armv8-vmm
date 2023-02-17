@@ -4,13 +4,13 @@
  * ABN 41 687 119 230.
  *
  * This software may be distributed and modified according to the terms of
- * the GNU General Public License version 2. Note that NO WARRANTY is provided.
- * See "LICENSE_GPLv2.txt" for details.
+ * the BSD 2-Clause license. Note that NO WARRANTY is provided.
+ * See "LICENSE_BSD2.txt" for details.
  *
- * @TAG(DATA61_GPL)
+ * @TAG(DATA61_BSD)
  */
-#ifndef _LIBKEYBOARD_KEYBOARD_H_
-#define _LIBKEYBOARD_KEYBOARD_H_
+
+#pragma once
 
 #include <stdint.h>
 
@@ -28,15 +28,13 @@ typedef void (*out8_fn)(uint16_t port, uint8_t value);
  *  in8 - Function for getting a byte from either IO port 0x60 or port 0x64.
  *  out8 - Function for writing a byte to either IO port 0x60 or port 0x64.
  */
-void keyboard_init(int enable_interrupt, in8_fn in8, out8_fn out8);
+void sel4keyboard_init(int enable_interrupt, in8_fn in8, out8_fn out8);
 
 /* Disable the keyboard device (which may or may not have been its initial state)
  */
-void keyboard_reset(void);
+void sel4keyboard_reset(void);
 
 /* Read a scancode. Returns 0 if there wasn't one.
  *  scancode - Location to store the read scancode
  */
-int keyboard_get_scancode(int *scancode);
-
-#endif /* !_LIBKEYBOARD_KEYBOARD_H_ */
+int sel4keyboard_get_scancode(int *scancode);

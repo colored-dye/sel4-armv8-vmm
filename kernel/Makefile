@@ -18,7 +18,7 @@
 SEL4_ARCH_LIST:=aarch32 aarch64 ia32 x86_64
 ARCH_LIST:=arm x86
 CPU_LIST:=arm1136jf-s ixp420 cortex-a7 cortex-a8 cortex-a9 cortex-a15 cortex-a53 cortex-a57
-PLAT_LIST:=imx31 pc99 ixp420 omap3 am335x exynos4 exynos5 imx6 imx7 imx8 apq8064 zynq7000 zynqmp allwinnerA20 tk1 hikey bcm2837 tx1 qemu-arm-virt
+PLAT_LIST:=imx31 pc99 ixp420 omap3 am335x exynos4 exynos5 imx6 imx7 imx8 apq8064 zynq7000 zynqmp allwinnerA20 tk1 hikey bcm2837 tx1
 ARMV_LIST:=armv6 armv7-a armv8-a
 
 ifndef SOURCE_ROOT
@@ -365,9 +365,6 @@ DEFINES += -DALLWINNERA20
 endif
 ifeq ($(PLAT),bcm2837)
 DEFINES += -DBCM2837
-endif
-ifeq ($(PLAT),qemu-arm-virt)
-DEFINES += -DQEMU-ARM-VIRT
 endif
 endif # SEL4_ARCH=aarch32
 ifeq (${SEL4_ARCH}, aarch64)

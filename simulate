@@ -1,6 +1,9 @@
+#!/usr/bin/sh
+
 qemu-system-aarch64 \
     --kernel images/sel4arm-vmm-image-arm-zynqmp \
     --cpu cortex-a53 \
-    --machine virt,virtualization=on,highmem=off,secure=off \
-    -m 2048 \
-    -nographic
+    --machine xlnx-zcu102,virtualization=on \
+    -m 4096 \
+    -nographic \
+    # -s -S

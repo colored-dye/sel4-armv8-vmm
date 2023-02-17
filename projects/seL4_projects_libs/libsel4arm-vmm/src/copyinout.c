@@ -33,12 +33,11 @@
 
 
 
-static int
-copy_out_page(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t* vka, void* src, void* dst, size_t size)
+static int copy_out_page(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t *vka, void *src, void *dst, size_t size)
 {
     cspacepath_t dup_cap_path, cap_path;
     seL4_CPtr dup_cap, cap;
-    void* tmp_dst;
+    void *tmp_dst;
     int offset;
     size_t copy_size;
     int bits;
@@ -105,6 +104,10 @@ copy_out_page(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t* vka, void* src,
         copy_size = size;
     }
     memcpy(tmp_dst + offset, src, copy_size);
+#if defined(CONFIG_ARCH_ARM) && !defined(CONFIG_PLAT_EXYNOS5)
+    int error = seL4_ARM_Page_CleanInvalidate_Data(dup_cap, 0, PAGE_SIZE_4K);
+    ZF_LOGF_IFERR(error, "seL4_ARM_Page_CleanInvalidate_Data failed");
+#endif
 
     /* Clean up */
     vspace_unmap_pages(src_vspace, tmp_dst, 1, bits, VSPACE_PRESERVE);
@@ -118,13 +121,12 @@ copy_out_page(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t* vka, void* src,
     return copy_size;
 }
 
-static int
-copy_out(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t* vka, void* src, uintptr_t dest, size_t size)
+static int copy_out(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t *vka, void *src, uintptr_t dest, size_t size)
 {
     DCOPYOUT("copy out 0x%x->0x%x (0x%x bytes)\n", (uint32_t)src, (uint32_t)dest, size);
     while (size) {
         int seg_size;
-        seg_size = copy_out_page(dst_vspace, src_vspace, vka, src, (void*)dest, size);
+        seg_size = copy_out_page(dst_vspace, src_vspace, vka, src, (void *)dest, size);
         assert(seg_size > 0);
         if (seg_size <= 0) {
             return -1;
@@ -137,18 +139,16 @@ copy_out(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t* vka, void* src, uint
 }
 
 
-int
-vm_copyout(vm_t* vm, void* data, uintptr_t address, size_t size)
+int vm_copyout(vm_t *vm, void *data, uintptr_t address, size_t size)
 {
     return copy_out(vm_get_vspace(vm), vm->vmm_vspace, vm->vka, data, address, size);
 }
 
-void*
-vm_copyout_elf(vm_t* vm, void* elf_file)
+void *vm_copyout_elf(vm_t *vm, elf_t *elf_file)
 {
-    seL4_Word entry;
-    int num_headers;
-    int i;
+    uintptr_t entry;
+    size_t num_headers;
+    size_t i;
 
     entry = elf_getEntryPoint(elf_file);
     if (entry == 0) {
@@ -162,7 +162,7 @@ vm_copyout_elf(vm_t* vm, void* elf_file)
             char *data;
             int err;
 
-            data = elf_file + elf_getProgramHeaderOffset(elf_file, i);
+            data = elf_getProgramSegment(elf_file, i);
             size = elf_getProgramHeaderFileSize(elf_file, i);
             ipa = elf_getProgramHeaderVaddr(elf_file, i);
 
@@ -172,16 +172,15 @@ vm_copyout_elf(vm_t* vm, void* elf_file)
             }
         }
     }
-    return (void*)entry;
+    return (void *)entry;
 }
 
 
-static int
-copy_in_page(vspace_t *vmm_vspace, vspace_t *vm_vspace, vka_t* vka, void* dest, void* src, size_t size)
+static int copy_in_page(vspace_t *vmm_vspace, vspace_t *vm_vspace, vka_t *vka, void *dest, void *src, size_t size)
 {
     seL4_CPtr cap, vmm_cap;
     cspacepath_t cap_path, vmm_cap_path;
-    void* tmp_src;
+    void *tmp_src;
     int offset;
     size_t copy_size;
     int bits;
@@ -240,13 +239,12 @@ copy_in_page(vspace_t *vmm_vspace, vspace_t *vm_vspace, vka_t* vka, void* dest, 
     return copy_size;
 }
 
-static int
-copy_in(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t* vka, void* dest, uintptr_t src, size_t size)
+static int copy_in(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t *vka, void *dest, uintptr_t src, size_t size)
 {
-    DCOPYIN("copy in 0x%lx->0x%lx (0x%lx bytes)\n", (long unsigned int)src, (long unsigned int)dest, size);
+    DCOPYIN("copy in 0x%x->0x%x (0x%x bytes)\n", (uint32_t)src, (uint32_t)dest, size);
     while (size) {
         int seg_size;
-        seg_size = copy_in_page(dst_vspace, src_vspace, vka, dest, (void*)src, size);
+        seg_size = copy_in_page(dst_vspace, src_vspace, vka, dest, (void *)src, size);
         assert(seg_size > 0);
         if (seg_size <= 0) {
             return -1;
@@ -258,8 +256,7 @@ copy_in(vspace_t *dst_vspace, vspace_t *src_vspace, vka_t* vka, void* dest, uint
     return 0;
 }
 
-int
-vm_copyin(vm_t* vm, void* data, uintptr_t address, size_t size)
+int vm_copyin(vm_t *vm, void *data, uintptr_t address, size_t size)
 {
     return copy_in(vm->vmm_vspace, vm_get_vspace(vm), vm->vka, data, address, size);
 }

@@ -19,6 +19,7 @@ menuconfig LIB_SEL4_ARM_VMM
     depends on LIB_SEL4_SIMPLE
     depends on LIB_SEL4_DMA
     depends on LIB_PLATSUPPORT
+    depends on LIB_VMMCORE
     depends on ARM_HYPERVISOR_SUPPORT
     help
         Build a VMM support library for the seL4 hypervisor

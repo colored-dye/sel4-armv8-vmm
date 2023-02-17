@@ -37,7 +37,6 @@ config_choice(KernelARMPlatform ARM_PLAT "Select the platform for the architectu
     "hikey;KernelPlatformHikey;PLAT_HIKEY;KernelArchARM"
     "rpi3;KernelPlatformRpi3;PLAT_BCM2837;KernelSel4ArchAarch32"
     "tx1;KernelPlatformTx1;PLAT_TX1;KernelSel4ArchAarch64"
-    "qemu-arm-virt;KernelPlatformQemuArmVirt;PLAT_QEMU;KernelSel4ArchAarch64"
 )
 
 if(KernelArchARM)
@@ -85,7 +84,6 @@ include(src/plat/bcm2837/config.cmake)
 include(src/plat/tk1/config.cmake)
 include(src/plat/tx1/config.cmake)
 include(src/plat/zynq7000/config.cmake)
-include(src/plat/qemu-arm-virt/config.cmake)
 
 # Now enshrine all the common variables in the config
 config_set(KernelArmCortexA7 ARM_CORTEX_A7 "${KernelArmCortexA7}")

@@ -428,7 +428,7 @@ int main(void)
       }
       for (int j = 0; j < iospace_caps; j++) {
           seL4_CPtr iospace = simple_get_nth_iospace_cap(&_simple, j);
-          err = vmm_guest_vspace_add_iospace(&_vspace, &vm[i].vm_vspace, iospace);
+          err = vmm_guest_vspace_add_iospace(&_vspace, &vm.vm_vspace, iospace);
           if (err) {
               ZF_LOGF("Fail to add iospace");
           }
